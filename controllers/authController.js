@@ -42,4 +42,25 @@ exports.signup = catchAsync(async (req, res, next) => {
 	createAndSendToken(user, 201, res)
 })
 
-exports.login = ''
+exports.login = catchAsync(async (req, res, next) => {
+	const { email, password } = req.body
+
+	if (!email | !password) {
+		return res.status(400).json({
+			status: 'failed',
+			message: 'Email and password required',
+		})
+	}
+
+	const user = User.findOne({ email }).select('+password')
+
+	// TODO, MAKE PASSWORD CHECK FN IN USERSCHEMA
+	if (!user || !(await user.correctPassword(password, user.password))) {
+		return res.status(401).json({
+			status: 'failed',
+			message: 'Incorrect email or password',
+		})
+	}
+
+	createAndSendToken(user, 200, res)
+})
