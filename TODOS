@@ -1,0 +1,22 @@
+Add roles capabilities
+
+User routes -- Get all users, get me, update name/email, delete me
+Auth routes -- Logout, change/forgot password
+
+User -- pre-save middleware to set changedPasswordAt, pre-find middleware to allow users to be inactive
+
+Add global error handler, custom errors
+
+Add top level security
+Serve static files
+
+
+Create images collection in DB to accept and index images
+
+
+FRONT_END
+Create React app for consuming api
+Create form for logging in
+Create routing system to create admin dashboard
+In logged in view, allow images to be uploaded
+Allow images to be viewed publicly
