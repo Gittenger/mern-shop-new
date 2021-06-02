@@ -1,5 +1,3 @@
-Add roles capabilities
-
 User routes -- Get all users, get me, update name/email, delete me
 Auth routes -- Logout, change/forgot password
 
@@ -12,6 +10,8 @@ Serve static files
 
 
 Create images collection in DB to accept and index images
+
+Convert to TypeScript
 
 
 FRONT_END
