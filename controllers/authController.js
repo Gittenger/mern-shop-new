@@ -1,5 +1,6 @@
 const User = require('../models/userSchema')
 const jwt = require('jsonwebtoken')
+const { promisify } = require('util')
 const catchAsync = require('../utils/catchAsync')
 
 const signToken = id =>
@@ -62,4 +63,48 @@ exports.login = catchAsync(async (req, res, next) => {
 	}
 
 	createAndSendToken(user, 200, res)
+})
+
+exports.protect = catchAsync(async (req, res, next) => {
+	let token
+
+	if (
+		req.headers.authorization &&
+		req.headers.authorization.startsWith('Bearer')
+	) {
+		token = req.headers.authorization.split(' ')[1]
+	} else if (req.cookies.jwt) {
+		token = req.cookies.jwt
+	}
+
+	if (!token) {
+		return res.status(401).json({
+			status: 'failed',
+			message: 'You are not logged in. Please log in for access',
+		})
+	}
+
+	// decoded jwt returns payload obj which contains id
+	const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
+
+	const currentUser = await User.findById(decoded.id)
+	if (!currentUser) {
+		return res.status(401).json({
+			status: 'failed',
+			message: 'The user belonging to this token no longer exists',
+		})
+	}
+
+	if (currentUser.changedPasswordAfter(decoded.iat)) {
+		return res.status(401).json({
+			status: 'failed',
+			message: 'This user recently changed their password. Please log in again.',
+		})
+	}
+
+	// grant access
+	req.user = currentUser
+	// grant usage to views
+	req.locals.user = currentUser
+	next()
 })
