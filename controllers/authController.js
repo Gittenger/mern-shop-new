@@ -52,9 +52,8 @@ exports.login = catchAsync(async (req, res, next) => {
 		})
 	}
 
-	const user = User.findOne({ email }).select('+password')
+	const user = await User.findOne({ email }).select('+password')
 
-	// TODO, MAKE PASSWORD CHECK FN IN USERSCHEMA
 	if (!user || !(await user.correctPassword(password, user.password))) {
 		return res.status(401).json({
 			status: 'failed',
