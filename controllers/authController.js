@@ -109,6 +109,16 @@ exports.protect = catchAsync(async (req, res, next) => {
 	next()
 })
 
+exports.logout = (req, res, next) => {
+	res.cookie('jwt', 'logged_out', {
+		expires: new Date(Date.now() + 10 * 1000),
+		httpOnly: true,
+	})
+	res.status(200).json({
+		status: 'success',
+	})
+}
+
 exports.restrictTo =
 	(...roles) =>
 	(req, res, next) => {
