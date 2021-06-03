@@ -1,4 +1,5 @@
 const express = require('express')
+const path = require('path')
 const morgan = require('morgan')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
@@ -42,6 +43,9 @@ const limiter = rateLimit({
 	message: 'Too many requests from this IP. Try again in one hour.',
 })
 app.use('/', limiter)
+
+// static files
+app.use(express.static(path.join(__dirname, 'public')))
 
 // custom request fields
 app.use((req, res, next) => {

@@ -5,9 +5,6 @@ User -- pre-save middleware to set changedPasswordAt, pre-find middleware to all
 
 Add global error handler, custom errors
 
-Serve static files
-
-
 Create images collection in DB to accept and index images
 
 Convert to TypeScript
