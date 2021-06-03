@@ -105,7 +105,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 	// grant access
 	req.user = currentUser
 	// grant usage to views
-	req.locals.user = currentUser
+	res.locals.user = currentUser
 	next()
 })
 
