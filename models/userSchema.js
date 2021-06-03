@@ -42,6 +42,7 @@ const userSchema = new mongoose.Schema({
 	},
 	active: {
 		type: Boolean,
+		select: false,
 		default: true,
 	},
 })
@@ -56,7 +57,7 @@ userSchema.pre('save', async function (next) {
 })
 
 // QUERY MIDDLEWARE | this == query
-userSchema.pre('/^find/', function (next) {
+userSchema.pre(/^find/, function (next) {
 	this.find({ active: { $ne: false } })
 	next()
 })
