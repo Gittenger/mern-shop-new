@@ -3,7 +3,7 @@ const authController = require('../controllers/authController')
 const userController = require('../controllers/userController')
 
 const { signup, login, protect, restrictTo, logout } = authController
-const { getOne, getMe } = userController
+const { getOne, getMe, getAll } = userController
 
 const router = express.Router()
 
@@ -15,6 +15,7 @@ router.use(protect)
 
 router.get('/getMe', getMe, getOne)
 
+router.get('/getAllUsers', restrictTo('admin'), getAll)
 router.get('/getUser/:id', restrictTo('admin'), getOne)
 
 module.exports = router
