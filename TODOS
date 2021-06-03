@@ -1,7 +1,7 @@
 User routes -- update name/email, delete me
 Auth routes -- change/forgot password
 
-User -- pre-save middleware to set changedPasswordAt, pre-find middleware to allow users to be inactive
+User -- pre-save middleware to set changedPasswordAt
 
 Add global error handler, custom errors
 

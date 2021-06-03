@@ -40,14 +40,24 @@ const userSchema = new mongoose.Schema({
 		enum: ['user', 'admin'],
 		default: 'user',
 	},
+	active: {
+		type: Boolean,
+		default: true,
+	},
 })
 
-// DOCUMENT MIDDLEWARE
+// DOCUMENT MIDDLEWARE | this == schema/document
 userSchema.pre('save', async function (next) {
 	if (!this.isModified('password')) next()
 
 	this.password = await bcrypt.hash(this.password, 12)
 	this.passwordConfirm = undefined
+	next()
+})
+
+// QUERY MIDDLEWARE | this == query
+userSchema.pre('/^find/', function (next) {
+	this.find({ active: { $ne: false } })
 	next()
 })
 
