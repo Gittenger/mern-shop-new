@@ -1,4 +1,4 @@
-User routes -- Get all users, get me, update name/email, delete me
+User routes -- Get all users, update name/email, delete me
 Auth routes -- change/forgot password
 
 User -- pre-save middleware to set changedPasswordAt, pre-find middleware to allow users to be inactive
