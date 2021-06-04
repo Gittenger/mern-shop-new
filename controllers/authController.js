@@ -9,7 +9,7 @@ const signToken = id =>
 		expiresIn: process.env.JWT_EXPIRES_IN | 0,
 	})
 
-const createAndSendToken = (user, statusCode, res) => {
+const createAndSendToken = (user, statusCode, req, res) => {
 	const token = signToken(user._id)
 	const cookieOptions = {
 		expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 1000),
@@ -40,7 +40,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 		passwordConfirm,
 	})
 
-	createAndSendToken(user, 201, res)
+	createAndSendToken(user, 201, req, res)
 })
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -62,7 +62,7 @@ exports.login = catchAsync(async (req, res, next) => {
 		})
 	}
 
-	createAndSendToken(user, 200, res)
+	createAndSendToken(user, 200, req, res)
 })
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -130,3 +130,20 @@ exports.restrictTo =
 		}
 		next()
 	}
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+	const user = User.findById(req.user.id).select('+password')
+
+	if (!(await user.correctPassword(req.body.currentPassword, user.password))) {
+		await res.status(401).json({
+			status: 'unauthorized',
+			message: 'Incorrect password provided. Please try again',
+		})
+	}
+
+	user.password = req.body.password
+	user.passwordConfirm = req.body.passwordConfirm
+	await user.save()
+
+	createAndSendToken(user, 200, req, res)
+})

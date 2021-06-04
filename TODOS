@@ -1,5 +1,5 @@
 User routes -- update name/email, delete me
-Auth routes -- change/forgot password
+Auth routes -- forgot password
 
 User -- pre-save middleware to set changedPasswordAt
 
