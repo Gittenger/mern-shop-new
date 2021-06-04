@@ -1,5 +1,6 @@
 const User = require('../models/userSchema')
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 const { promisify } = require('util')
 const catchAsync = require('../utils/catchAsync')
 
@@ -144,6 +145,41 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 	user.password = req.body.password
 	user.passwordConfirm = req.body.passwordConfirm
 	await user.save()
+
+	createAndSendToken(user, 200, req, res)
+})
+
+exports.resetPassword = catchAsync(async (req, res, next) => {
+	// token coming from reset password link
+	const hashedToken = crypto
+		.createHash('sha250')
+		.update(req.params.token)
+		.digest('hex')
+
+	// user found from decoding token
+	// must not be expired for query to return a user
+	const user = await User.findOne({
+		passwordResetToken: hashedToken,
+		passwordResetExpires: {
+			$gt: Date.now(),
+		},
+	})
+	if (!user) {
+		return res.status(400).json({
+			status: 'bad request',
+			message: 'token is invalid or expired',
+		})
+	}
+
+	user.password = req.body.password
+	user.passwordConfirm = req.body.passwordConfirm
+	user.passwordResetToken = req.body.passwordResetToken
+	user.passwordResetToken = undefined
+	user.passwordResetExpires = undefined
+
+	await user.save()
+
+	// set changedPasswordAfter field in document middleware
 
 	createAndSendToken(user, 200, req, res)
 })
