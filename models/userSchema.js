@@ -50,6 +50,7 @@ const userSchema = new mongoose.Schema({
 })
 
 // DOCUMENT MIDDLEWARE | this == schema/document
+// hash password before saving
 userSchema.pre('save', async function (next) {
 	if (!this.isModified('password')) next()
 
@@ -58,17 +59,30 @@ userSchema.pre('save', async function (next) {
 	next()
 })
 
+//set passwordChangedAt field on password change
+userSchema.pre('save', async function (next) {
+	if (!this.isModified('password') || this.isNew()) return next()
+
+	// set for 1 second in past
+	// prevents protect fn from locking user out if field is set after JWT issued
+	this.passwordChangedAt = Date.now() - 1000
+	next()
+})
+
 // QUERY MIDDLEWARE | this == query
+// find only active (not deleted) users
 userSchema.pre(/^find/, function (next) {
 	this.find({ active: { $ne: false } })
 	next()
 })
 
 // STATIC METHODS
+// compare passwords
 userSchema.methods.correctPassword = async function (rqPassword, dbPassword) {
 	return await bcrypt.compare(rqPassword, dbPassword)
 }
 
+// check if password changed after JWT issued
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
 	if (this.passwordChangedAt) {
 		const changedTimeStamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10)

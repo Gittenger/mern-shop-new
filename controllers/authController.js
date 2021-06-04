@@ -179,7 +179,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
 	await user.save()
 
-	// set changedPasswordAfter field in document middleware
+	// set changedPasswordAt field in document middleware
 
 	createAndSendToken(user, 200, req, res)
 })
