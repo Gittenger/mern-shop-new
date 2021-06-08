@@ -6,6 +6,7 @@ const pug = require('pug')
 module.exports = class Email {
 	constructor(user, url) {
 		this.to = user.email
+		this.name = user.name
 		this.url = url
 		this.from = process.env.EMAIL_FROM || 'defaultAdmin@test.com'
 	}
@@ -31,6 +32,7 @@ module.exports = class Email {
 	async send(template, subject) {
 		const html = pug.renderFile(`${__dirname}/mailTemplates/${template}.pug`, {
 			url: this.url,
+			name: this.name,
 			subject,
 		})
 

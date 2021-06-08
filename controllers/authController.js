@@ -42,6 +42,11 @@ exports.signup = catchAsync(async (req, res, next) => {
 		passwordConfirm,
 	})
 
+	// dashboard link
+	const url = `${req.protocol}://${req.get('host')}/myProfile`
+
+	await new Email(user, url).sendWelcome()
+
 	createAndSendToken(user, 201, req, res)
 })
 
@@ -168,7 +173,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 			'host'
 		)}/resetPassword/${resetToken}`
 
-		await new Email(user, resetUrl)
+		await new Email(user, resetUrl).sendPasswordReset()
 
 		return res.status(200).json({
 			status: 'success',
