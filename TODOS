@@ -1,5 +1,6 @@
 User routes -- update name/email, delete me
-Auth routes -- update password, reset password, forgot password
+
+test password routes
 
 Add email templates
 

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcrypt')
+const crypto = require('crypto')
 
 const userSchema = new mongoose.Schema({
 	name: {
@@ -89,6 +90,23 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
 		return JWTTimestamp < changedTimeStamp
 	}
 	return false
+}
+
+// create password reset token
+userSchema.methods.createPasswordResetToken = function () {
+	// generate random characters
+	const resetToken = crypto.randomBytes(32).toString('hex')
+
+	// encrypt sequence to be saved on database
+	// only saved after calling user.save() in controller
+	this.passwordResetToken = crypto
+		.createHash('sha256')
+		.update(resetToken)
+		.digest('hex')
+
+	this.passwordResetExpires = Date.now() + 10 * 60 * 1000
+
+	return resetToken
 }
 
 const User = mongoose.model('User', userSchema)

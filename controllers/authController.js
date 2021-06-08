@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
 const { promisify } = require('util')
 const catchAsync = require('../utils/catchAsync')
+const Email = require('../utils/email')
 
 const signToken = id =>
 	jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -149,10 +150,46 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 	createAndSendToken(user, 200, req, res)
 })
 
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+	const user = await User.findOne({ email: req.body.email })
+	if (!user) {
+		return res.status(404).json({
+			status: 'Not found',
+			message: 'No user found with that email',
+		})
+	}
+
+	const resetToken = user.createPasswordResetToken()
+
+	await user.save({ validateBeforeSave: false })
+
+	try {
+		const resetUrl = `${req.protocol}://${req.get(
+			'host'
+		)}/resetPassword/${resetToken}`
+
+		await new Email(user, resetUrl)
+
+		return res.status(200).json({
+			status: 'success',
+			message: 'Password reset token sent to email',
+		})
+	} catch (err) {
+		user.passwordResetToken = undefined
+		user.passwordResetExpires = undefined
+		await user.save({ validateBeforeSave: false })
+
+		return res.status(500).json({
+			status: 'Server error',
+			message: 'There was an error sending the email. Please try again',
+		})
+	}
+})
+
 exports.resetPassword = catchAsync(async (req, res, next) => {
 	// token coming from reset password link
 	const hashedToken = crypto
-		.createHash('sha250')
+		.createHash('sha256')
 		.update(req.params.token)
 		.digest('hex')
 
