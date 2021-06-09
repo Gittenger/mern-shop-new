@@ -12,7 +12,7 @@ const {
 	updatePassword,
 	resetPassword,
 } = authController
-const { getOne, getMe, getAll, updateMe } = userController
+const { getOne, getMe, getAll, updateMe, deleteMe } = userController
 
 const router = express.Router()
 
@@ -27,6 +27,7 @@ router.use(protect)
 router.get('/users/me', getMe, getOne)
 router.patch('/users/me/update', updateMe)
 router.patch('/updatePassword', updatePassword)
+router.delete('/users/me/delete', deleteMe)
 
 router.get('/users/list', restrictTo('admin'), getAll)
 router.get('/users/:id', restrictTo('admin'), getOne)
