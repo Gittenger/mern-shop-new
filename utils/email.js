@@ -17,20 +17,20 @@ module.exports = class Email {
 			return nodemailer.createTransport(
 				nodemailerSendgrid({ apiKey: process.env.SENDGRID_API_KEY })
 			)
+		} else {
+			return nodemailer.createTransport({
+				host: process.env.EMAIL_HOST,
+				port: process.env.EMAIL_PORT,
+				auth: {
+					user: process.env.EMAIL_USERNAME,
+					pass: process.env.EMAIL_PASSWORD,
+				},
+			})
 		}
-
-		return nodemailer.createTransport({
-			service: process.env.EMAIL_HOST,
-			port: process.env.EMAIL_PORT,
-			auth: {
-				user: process.env.EMAIL_USERNAME,
-				pass: process.env.EMAIL_PASSWORD,
-			},
-		})
 	}
 
 	async send(template, subject) {
-		const html = pug.renderFile(`${__dirname}/mailTemplates/${template}.pug`, {
+		const html = pug.renderFile(`${__dirname}/../mailTemplates/${template}.pug`, {
 			url: this.url,
 			name: this.name,
 			subject,

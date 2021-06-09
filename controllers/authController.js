@@ -184,10 +184,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 		user.passwordResetExpires = undefined
 		await user.save({ validateBeforeSave: false })
 
-		return res.status(500).json({
-			status: 'Server error',
-			message: 'There was an error sending the email. Please try again',
-		})
+		return res.status(500).send(err)
 	}
 })
 
