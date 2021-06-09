@@ -62,7 +62,7 @@ userSchema.pre('save', async function (next) {
 
 //set passwordChangedAt field on password change
 userSchema.pre('save', async function (next) {
-	if (!this.isModified('password') || this.isNew()) return next()
+	if (!this.isModified('password') || this.isNew) return next()
 
 	// set for 1 second in past
 	// prevents protect fn from locking user out if field is set after JWT issued

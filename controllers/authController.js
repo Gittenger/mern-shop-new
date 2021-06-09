@@ -139,7 +139,7 @@ exports.restrictTo =
 	}
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
-	const user = User.findById(req.user.id).select('+password')
+	const user = await User.findById(req.user.id).select('+password')
 
 	if (!(await user.correctPassword(req.body.currentPassword, user.password))) {
 		await res.status(401).json({
