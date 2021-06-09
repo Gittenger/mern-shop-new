@@ -9,6 +9,9 @@ const rateLimit = require('express-rate-limit')
 const mongoSanitize = require('express-mongo-sanitize')
 const userRoutes = require('./routes/userRoutes')
 
+const AppError = require('./utils/appError')
+const globalErrorHandler = require('./controllers/errorController')
+
 const app = express()
 
 // dev tools
@@ -57,10 +60,11 @@ app.use((req, res, next) => {
 app.use('/', userRoutes)
 
 app.all('*', (req, res, next) => {
-	res.status(404).json({
-		status: 'not found',
-		message: `can't find ${req.originalUrl} route not found on server`,
-	})
+	next(
+		new AppError(`can't find ${req.originalUrl} route not found on server`, 404)
+	)
 })
+
+app.use(globalErrorHandler)
 
 module.exports = app
