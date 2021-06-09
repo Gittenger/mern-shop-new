@@ -1,7 +1,13 @@
 const dotenv = require('dotenv')
 dotenv.config({ path: './.env' })
-
 const mongoose = require('mongoose')
+
+process.on('uncaughtException', err => {
+	console.log(err.name, err.message)
+	console.log('Uncaught exception! 💥 Shutting down...')
+	process.exit(1)
+})
+
 const app = require('./app')
 
 const db = process.env.DB_CONNECTION.replace(
