@@ -24,10 +24,10 @@ router.patch('/resetPassword/:token', resetPassword)
 
 router.use(protect)
 
-router.get('/getMe', getMe, getOne)
-router.get('/updatePassword', updatePassword)
+router.get('/users/me', getMe, getOne)
+router.patch('/updatePassword', updatePassword)
 
-router.get('/getAllUsers', restrictTo('admin'), getAll)
-router.get('/getUser/:id', restrictTo('admin'), getOne)
+router.get('/users/list', restrictTo('admin'), getAll)
+router.get('/users/:id', restrictTo('admin'), getOne)
 
 module.exports = router
