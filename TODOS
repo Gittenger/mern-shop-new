@@ -1,8 +1,6 @@
 add dashboard route/controller
 
-Add global error handler, custom errors
-
-Create images collection in DB to accept and index images
+Test cookie login again
 
 Convert to TypeScript
 

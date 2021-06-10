@@ -7,7 +7,9 @@ const helmet = require('helmet')
 const xss = require('xss-clean')
 const rateLimit = require('express-rate-limit')
 const mongoSanitize = require('express-mongo-sanitize')
+
 const userRoutes = require('./routes/userRoutes')
+const imageRoutes = require('./routes/imageRoutes')
 
 const AppError = require('./utils/appError')
 const globalErrorHandler = require('./controllers/errorController')
@@ -58,6 +60,7 @@ app.use((req, res, next) => {
 
 // routes
 app.use('/', userRoutes)
+app.use('/', imageRoutes)
 
 app.all('*', (req, res, next) => {
 	next(
