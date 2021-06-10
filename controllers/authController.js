@@ -2,6 +2,7 @@ const User = require('../models/userSchema')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
 const { promisify } = require('util')
+const AppError = require('../utils/appError')
 const catchAsync = require('../utils/catchAsync')
 const Email = require('../utils/email')
 
@@ -54,19 +55,13 @@ exports.login = catchAsync(async (req, res, next) => {
 	const { email, password } = req.body
 
 	if (!email | !password) {
-		return res.status(400).json({
-			status: 'failed',
-			message: 'Email and password required',
-		})
+		return next(new AppError('Email and password required', 400))
 	}
 
 	const user = await User.findOne({ email }).select('+password')
 
 	if (!user || !(await user.correctPassword(password, user.password))) {
-		return res.status(401).json({
-			status: 'failed',
-			message: 'Incorrect email or password',
-		})
+		return next(new AppError('Incorrect email or password', 401))
 	}
 
 	createAndSendToken(user, 200, req, res)
@@ -85,10 +80,9 @@ exports.protect = catchAsync(async (req, res, next) => {
 	}
 
 	if (!token) {
-		return res.status(401).json({
-			status: 'failed',
-			message: 'You are not logged in. Please log in for access',
-		})
+		return next(
+			new AppError('You are not logged in. Please log in for access', 401)
+		)
 	}
 
 	// decoded jwt returns payload obj which contains id
@@ -96,17 +90,18 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 	const currentUser = await User.findById(decoded.id)
 	if (!currentUser) {
-		return res.status(401).json({
-			status: 'failed',
-			message: 'The user belonging to this token no longer exists',
-		})
+		return next(
+			new AppError('The user belonging to this token no longer exists', 401)
+		)
 	}
 
 	if (currentUser.changedPasswordAfter(decoded.iat)) {
-		return res.status(401).json({
-			status: 'failed',
-			message: 'This user recently changed their password. Please log in again.',
-		})
+		return next(
+			new AppError(
+				'This user recently changed their password. Please log in again.',
+				401
+			)
+		)
 	}
 
 	// grant access
@@ -130,10 +125,9 @@ exports.restrictTo =
 	(...roles) =>
 	(req, res, next) => {
 		if (!roles.includes(req.user.role)) {
-			return res.status(403).json({
-				status: 'forbidden',
-				message: 'You do not have permission to perform this action',
-			})
+			return next(
+				new AppError('You do not have permission to perform this action', 403)
+			)
 		}
 		next()
 	}
@@ -142,10 +136,9 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 	const user = await User.findById(req.user.id).select('+password')
 
 	if (!(await user.correctPassword(req.body.currentPassword, user.password))) {
-		await res.status(401).json({
-			status: 'unauthorized',
-			message: 'Incorrect password provided. Please try again',
-		})
+		return next(
+			new AppError('Incorrect password provided. Please try again', 401)
+		)
 	}
 
 	user.password = req.body.password
@@ -158,10 +151,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 exports.forgotPassword = catchAsync(async (req, res, next) => {
 	const user = await User.findOne({ email: req.body.email })
 	if (!user) {
-		return res.status(404).json({
-			status: 'Not found',
-			message: 'No user found with that email',
-		})
+		return next(new AppError('No user found with that email', 404))
 	}
 
 	const resetToken = user.createPasswordResetToken()
@@ -184,7 +174,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 		user.passwordResetExpires = undefined
 		await user.save({ validateBeforeSave: false })
 
-		return res.status(500).send(err)
+		return next(
+			new AppError('There was an error sending the email. Try again later', 500)
+		)
 	}
 })
 
@@ -204,10 +196,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 		},
 	})
 	if (!user) {
-		return res.status(400).json({
-			status: 'bad request',
-			message: 'token is invalid or expired',
-		})
+		return next(new AppError('token is invalid or expired', 400))
 	}
 
 	user.password = req.body.password

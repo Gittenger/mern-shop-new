@@ -65,6 +65,8 @@ app.all('*', (req, res, next) => {
 	)
 })
 
+// errors that are created by code in handlers will be constructed using AppError
+// they will be "operational", all other errors will be misc server errors
 app.use(globalErrorHandler)
 
 module.exports = app

@@ -1,4 +1,5 @@
 const User = require('../models/userSchema')
+const AppError = require('../utils/appError')
 const catchAsync = require('../utils/catchAsync')
 
 const filteredObj = (obj, ...allowedFields) => {
@@ -31,10 +32,7 @@ exports.getOne = catchAsync(async (req, res, next) => {
 	const user = await User.findById(req.params.id)
 
 	if (!user) {
-		return res.status(404).json({
-			status: 'not found',
-			message: 'No user found with that ID',
-		})
+		return next(new AppError('No user found with that ID', 404))
 	}
 
 	res.status(200).json({
@@ -51,11 +49,12 @@ exports.getMe = (req, res, next) => {
 
 exports.updateMe = catchAsync(async (req, res, next) => {
 	if (req.body.password || req.body.passwordConfirm) {
-		return res.status(400).json({
-			status: 'bad request',
-			message:
+		return next(
+			new AppError(
 				'This route is not for changing password. Please use /updatePassword',
-		})
+				400
+			)
+		)
 	}
 
 	const filteredBody = filteredObj(req.body, 'name', 'email')
