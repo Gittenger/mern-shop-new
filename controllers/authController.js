@@ -24,11 +24,19 @@ const createAndSendToken = (user, statusCode, req, res) => {
 
 	user.password = undefined
 
+	const { id, role, name, email } = user
+
 	res.status(statusCode).json({
 		status: 'success',
 		token,
-		data: {
-			user,
+		user: {
+			id,
+			role,
+			name,
+			email,
+		},
+		rawUserData: {
+			...user._doc,
 		},
 	})
 }
