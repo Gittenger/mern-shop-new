@@ -35,9 +35,6 @@ const createAndSendToken = (user, statusCode, req, res) => {
 			name,
 			email,
 		},
-		rawUserData: {
-			...user._doc,
-		},
 	})
 }
 
