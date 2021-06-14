@@ -6,12 +6,18 @@ Convert to TypeScript
 
 
 FRONT_END
-Create React app for consuming api
-Create form for logging in
-Create routing system to create admin dashboard
+Add logout feature -- remove jwt from localstorage
+Add loading state to login component
+Redirect user from login page
+Create signup page
+Navigation -- based on login state
+Setup normal/private/admin routes
+Admin Dashboard
+Layout Component
 In logged in view, allow images to be uploaded
-Allow images to be viewed publicly
 Custom error page
+
+Check cookie saving to browser??
 
 DEPLOY
 Figure out deployment, do i use cors?

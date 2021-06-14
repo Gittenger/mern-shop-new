@@ -15,4 +15,10 @@ export const auth = {
 				console.log(err)
 			})
 	},
+	setAuthToken: function (data, next) {
+		if (window !== undefined) {
+			localStorage.setItem('jwt', JSON.stringify(data))
+		}
+		next()
+	},
 }

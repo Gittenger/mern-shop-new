@@ -2,15 +2,16 @@ import React, { useState } from 'react'
 import { LoginFormContainer } from './Login.styles'
 import { auth } from '../utils/utils-index'
 
-const { authUser } = auth
+const { authUser, setAuthToken } = auth
 
 const Login = () => {
 	const [values, setValues] = useState({
 		email: '',
 		password: '',
+		error: '',
 	})
 
-	const { email, password } = values
+	const { email, password, error } = values
 
 	const handleChange = name => event => {
 		setValues({
@@ -21,10 +22,34 @@ const Login = () => {
 
 	const handleSubmit = event => {
 		event.preventDefault()
+		setValues({ ...values, error: '' })
 		authUser({ email, password }, { authRoute: 'login' }).then(res => {
-			console.log(res)
+			if (res.error) {
+				console.log(res)
+				setValues({ ...values, error: res.message })
+			} else {
+				console.log(res)
+				setAuthToken(res, () => {
+					setValues({
+						...values,
+						error: '',
+					})
+				})
+			}
 		})
 	}
+
+	const showError = () => (
+		<div
+			style={{
+				display: error ? '' : 'none',
+				backgroundColor: 'darkred',
+				color: 'offwhite',
+			}}
+		>
+			{error}
+		</div>
+	)
 
 	const LoginForm = () => (
 		<LoginFormContainer>
@@ -48,6 +73,7 @@ const Login = () => {
 		<>
 			<h1>Login Page</h1>
 			{LoginForm()}
+			{showError()}
 		</>
 	)
 }
