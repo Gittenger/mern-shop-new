@@ -59,8 +59,8 @@ app.use((req, res, next) => {
 })
 
 // routes
-app.use('/', userRoutes)
-app.use('/', imageRoutes)
+app.use('/api/users', userRoutes)
+app.use('/api/images', imageRoutes)
 
 app.all('*', (req, res, next) => {
 	next(

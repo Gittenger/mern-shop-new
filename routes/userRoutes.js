@@ -24,12 +24,12 @@ router.patch('/resetPassword/:token', resetPassword)
 
 router.use(protect)
 
-router.get('/users/me', getMe, getOne)
-router.patch('/users/me/update', updateMe)
+router.get('/me', getMe, getOne)
+router.patch('/me/update', updateMe)
 router.patch('/updatePassword', updatePassword)
-router.delete('/users/me/delete', deleteMe)
+router.delete('/me/delete', deleteMe)
 
-router.get('/users/list', restrictTo('admin'), getAll)
-router.get('/users/:id', restrictTo('admin'), getOne)
+router.get('/list', restrictTo('admin'), getAll)
+router.get('/:id', restrictTo('admin'), getOne)
 
 module.exports = router

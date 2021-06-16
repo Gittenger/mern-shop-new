@@ -5,10 +5,12 @@ const authController = require('../controllers/authController')
 const router = express.Router()
 
 const { protect } = authController
-const { uploadImage, updateImageDB } = imageController
+const { uploadImage, updateImageDB, getImages } = imageController
+
+router.get('/', getImages)
 
 router.use(protect)
 
-router.post('/uploadImage', uploadImage, updateImageDB)
+router.post('/upload', uploadImage, updateImageDB)
 
 module.exports = router
