@@ -21,4 +21,11 @@ export const auth = {
 		}
 		next()
 	},
+	checkAuthToken: function () {
+		return typeof window == undefined
+			? false
+			: localStorage.getItem('jwt')
+			? JSON.parse(localStorage.getItem('jwt'))
+			: false
+	},
 }
