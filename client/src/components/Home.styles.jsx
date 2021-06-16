@@ -4,4 +4,5 @@ import { Link } from 'react-router-dom'
 export const NavLink = styled(Link)`
 	color: dodgerblue;
 	font-size: 1.7rem;
+	margin-right: 1.5rem;
 `
