@@ -1,23 +1,29 @@
-add dashboard route/controller
-
+BACK_END
 Test cookie login again
-
 Convert to TypeScript
 
 
 FRONT_END
-Add logout feature -- remove jwt from localstorage
-Add loading state to login component
-Redirect user from login page
-Create signup page
-Navigation -- based on login state
-Setup normal/private/admin routes
-Admin Dashboard
-Layout Component
-In logged in view, allow images to be uploaded
-Custom error page
+Images:
+1. Gallery for all images -- public, get from server
+2. View for admin to see all images for deletion
 
-Check cookie saving to browser??
+Later: 
+Batch image uploads
+Custom image ordering
+
+Auth:
+1. Logout feature -- remove JWT from localstorate
+2. Special nav button only appears if admin
+3. Redirect on login
+Bonus: Add loading state to login component
+
+Other:
+1. Layout component
+2. Signup page
+3. Custom error page
+4. Check if cookie is saving to browser
+
 
 DEPLOY
 Figure out deployment, do i use cors?
