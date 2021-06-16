@@ -15,7 +15,7 @@ const ImageUpload = () => {
 		const formData = new FormData()
 		formData.append('image', selectedFile)
 
-		fetch(`${API}/uploadImage`, {
+		fetch(`${API}/images/upload`, {
 			method: 'POST',
 			headers: {
 				Authorization: `Bearer ${token}`,
