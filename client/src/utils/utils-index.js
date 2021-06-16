@@ -2,7 +2,7 @@ import { API } from '../env'
 
 export const auth = {
 	authUser: function (user, options) {
-		return fetch(`${API}/${options.authRoute}`, {
+		return fetch(`${API}/users/${options.authRoute}`, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
