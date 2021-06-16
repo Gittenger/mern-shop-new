@@ -39,3 +39,12 @@ exports.updateImageDB = catchAsync(async (req, res, next) => {
 		img,
 	})
 })
+
+exports.getImages = catchAsync(async (req, res, next) => {
+	const images = await Image.find()
+
+	res.status(200).json({
+		status: 'success',
+		images,
+	})
+})
