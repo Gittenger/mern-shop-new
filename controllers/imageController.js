@@ -2,6 +2,8 @@ const multer = require('multer')
 const Image = require('../models/imageSchema')
 const catchAsync = require('../utils/catchAsync')
 const AppError = require('../utils/appError')
+const path = require('path')
+const fs = require('fs')
 
 const multerStorage = multer.diskStorage({
 	// first param of cb's is error
@@ -46,5 +48,24 @@ exports.getImages = catchAsync(async (req, res, next) => {
 	res.status(200).json({
 		status: 'success',
 		images,
+	})
+})
+
+exports.deleteImage = catchAsync(async (req, res, next) => {
+	const filePath = path.resolve(
+		`${__dirname}/../public/img/${req.body.filename}`
+	)
+
+	await fs.unlink(filePath, err => {
+		if (err) {
+			next(new AppError('Error deleting file', 500))
+		}
+	})
+
+	await Image.findByIdAndDelete(req.body.id)
+
+	res.status(204).json({
+		status: 'success',
+		data: null,
 	})
 })
