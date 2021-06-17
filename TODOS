@@ -4,11 +4,6 @@ Convert to TypeScript
 
 
 FRONT_END
-Images:
-1. Gallery for all images -- public, get from server
-2. View for admin to see all images for deletion
-
-Later: 
 Batch image uploads
 Custom image ordering
 
